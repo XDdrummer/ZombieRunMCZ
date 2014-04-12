@@ -1,0 +1,4 @@
+name: ZombieRun
+version: 0.1
+main: com.apzombies.zombierun.ZombieRunMain
+description: Zombie Run Minigame

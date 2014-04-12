@@ -1,0 +1,7 @@
+zombieRunWorlds:
+- 'zombieRunTestWorld'
+- 'world'
+
+tokens:
+  bb25d0c7-9b49-4f3a-aec4-077ef8fd42fe:
+    tokenNumber: 0

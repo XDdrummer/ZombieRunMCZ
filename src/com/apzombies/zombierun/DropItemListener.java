@@ -1,8 +1,5 @@
 package com.apzombies.zombierun;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,8 +13,8 @@ public class DropItemListener implements Listener{
 	@EventHandler
 	public void onItemDrop(PlayerDropItemEvent event){
 		Player p = event.getPlayer();
-		List<String> worldName = new ArrayList<String>();
-		if(worldName.equals(plugin.getConfig().getStringList("zombieRunWorlds"))){
+		String worldName = p.getWorld().getName();
+		if(worldName.contains("zombieRun")||worldName.equals("world")){
 			if(!p.isOp()){
 				p.sendMessage(ChatColor.RED + "Sorry, you can't drop items in Zombie Run!");
 				event.setCancelled(true);

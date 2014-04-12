@@ -28,7 +28,7 @@ public class PlayerMoveListener implements Listener{
 	public void onPlayerMove(PlayerMoveEvent event){
 		Player p = event.getPlayer();
 		List<String> worldName = new ArrayList<String>();
-		if(worldName == plugin.getConfig().getStringList("zombieRunWorlds")){
+		if(worldName.equals(plugin.getConfig().getStringList("zombieRunWorlds")){
 			Material blockIsOn = p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType();
 			Material blockIsIn = p.getLocation().getBlock().getType();
 			Location pLoc = p.getLocation();

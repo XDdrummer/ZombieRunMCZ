@@ -5,21 +5,5 @@ description: Zombie Run Minigame
 commands:
   setmapspawn:
     description: Set the spawn for a ZombieRun map
-permissions:
-    zombierun.*:
-        description: Administrator permission, has all perms
-        children:
-            zombierun.map.*: true
-        default: op
-    zombierun.map.*:
-        description: Access to all ZombieRun maps
-        children:
-            zombierun.map.default: true
-            zombierun.map.donor: true
-        default: false
-    zombierun.map.default:
-        description: Access to any maps defined as 'default'
-        default: true
-    zombierun.map.donor:
-        description: Access to any maps defined as 'donor'
-        default: false
+  zrkit:
+    description: Choose a kit, any kit

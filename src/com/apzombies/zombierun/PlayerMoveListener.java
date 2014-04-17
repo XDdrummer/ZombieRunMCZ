@@ -1,105 +1,129 @@
 package com.apzombies.zombierun;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class PlayerMoveListener implements Listener{
 
-	ZombieRunMain plugin;
-
-	HashMap<String, Long> cooldowns = new HashMap<String, Long>();
+	ZombieRunMain plug;
 	
-	public Location mapSpawn = (Location) plugin.getConfig().get("mapSpawns");
+	Plugin plugin = plug;
+
+	ArrayList<Player> cooldown = new ArrayList<Player>();
+	ArrayList<Player> obbycooldown = new ArrayList<Player>();
+	ArrayList<Player> emeraldcooldown = new ArrayList<Player>();
+ 	ArrayList<Player> diamondcooldown = new ArrayList<Player>();
+ 	ArrayList<Player> ironcooldown = new ArrayList<Player>();
+ 	ArrayList<Player> lapiscooldown = new ArrayList<Player>();
+
+	Map<UUID, int[]> tokens = new HashMap<UUID, int[]>();
 
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event){
-		Player p = event.getPlayer();
+		final Player p = event.getPlayer();
 		String worldName = p.getWorld().getName();
 		if(worldName.contains("zombieRun")||worldName.equals("world")){
 			Material blockIsOn = p.getLocation().getBlock().getRelative(BlockFace.DOWN).getType();
-			Material blockIsIn = p.getLocation().getBlock().getType();
 			Location pLoc = p.getLocation();
 			double chanceOfEntity = Math.random();
 
 			if(blockIsOn == Material.OBSIDIAN){
-				if(chanceOfEntity > 0.05){
-					EntityType entity =  EntityType.ZOMBIE;
-					p.getWorld().spawnCreature(pLoc, entity);
+				if(obbycooldown.contains(p)){
 				}else{
-					EntityType entity = EntityType.SKELETON;
-					p.getWorld().spawnCreature(pLoc, entity);
+					if(chanceOfEntity > 0.05){
+						EntityType entity =  EntityType.ZOMBIE;
+						p.getWorld().spawnCreature(pLoc, entity);
+						obbycooldown.add(p);
+						Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
+							@Override
+							public void run() {
+								obbycooldown.remove(p);
+							}
+						}, 20);
+					}else{
+						EntityType entity = EntityType.SKELETON;
+						p.getWorld().spawnCreature(pLoc, entity);
+						Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
+							@Override
+							public void run() {
+								obbycooldown.remove(p);
+							}
+						}, 20);
+					}
 				}
+
 			}else if(blockIsOn == Material.EMERALD_BLOCK){
 				EntityType entity = EntityType.GIANT;
-				p.getWorld().spawnCreature(pLoc, entity);
+				if(emeraldcooldown.contains(p)){
+				}else{
+					p.getWorld().spawnCreature(pLoc, entity);
+					emeraldcooldown.add(p);
+				}
+				
 			}else if(blockIsOn == Material.DIAMOND_BLOCK){
 				PotionEffect diamondBlock = new PotionEffect(PotionEffectType.SPEED, 200, 1);
-				p.addPotionEffect(diamondBlock);
+				
+				if(diamondcooldown.contains(p)){
+				}else{
+					p.addPotionEffect(diamondBlock);
+					diamondcooldown.add(p);
+				}
+				
 			}else if(blockIsOn == Material.IRON_BLOCK){
 				PotionEffect ironBlock = new PotionEffect(PotionEffectType.JUMP, 200, 1);
-				p.addPotionEffect(ironBlock);
+				if(ironcooldown.contains(p)){
+				}else{
+					p.addPotionEffect(ironBlock);
+					ironcooldown.add(p);
+				}
+
 			}else if(blockIsOn == Material.LAPIS_BLOCK){
 				PotionEffect lapisBlock = new PotionEffect(PotionEffectType.SLOW, 200, 1);
-				p.addPotionEffect(lapisBlock);
-			}else if(blockIsOn == Material.GOLD_BLOCK){
-				int cooldownTime = 5;
-				if(cooldowns.containsKey(p.getName())) {
-					long secondsLeft = ((cooldowns.get(p.getName())/1000)+cooldownTime) - (System.currentTimeMillis()/1000);
-					if(secondsLeft>0) {
-						p.sendMessage(ChatColor.YELLOW + "[ZombieRunTokens]" + ChatColor.RED + "You cannot collect more tokens from this block yet!");
-					}
+				if(lapiscooldown.contains(p)){
 				}else{
-					cooldowns.put(p.getName(), System.currentTimeMillis());
-					if(plugin.getConfig().contains("tokens." + p.getUniqueId())){
-						plugin.getConfig().set("tokens." + p.getUniqueId() + ".tokenNumber", (plugin.getConfig().getInt("tokens." + p.getUniqueId() + ".tokenNumber")) + 1);
-						p.sendMessage(ChatColor.YELLOW + "[ZombieRunTokens]" + ChatColor.GREEN + "You gained 1 token!");
-					}else{
-						plugin.getConfig().createSection("tokens." + p.getUniqueId());
-						plugin.getConfig().set("tokens." + p.getUniqueId() + ".tokenNumber", (plugin.getConfig().getInt("tokens." + p.getUniqueId() + ".tokenNumber")) + 1);
-						p.sendMessage(ChatColor.YELLOW + "[ZombieRunTokens]" + ChatColor.GREEN + "You gained 1 token!");
-					}
+					p.addPotionEffect(lapisBlock);
+					lapiscooldown.add(p);
 				}
+				
+			}else if(blockIsOn == Material.PUMPKIN){
+
 			}
-			if(blockIsIn == Material.WATER||blockIsIn == Material.STATIONARY_WATER){
-				World world = p.getWorld();
-				p.teleport((Location) plugin.getConfig().get(world.getName() + ".mapSpawn"));
-			}else if(blockIsIn == Material.LAVA||blockIsIn == Material.STATIONARY_LAVA){
-				World world = p.getWorld();
-				p.teleport((Location) plugin.getConfig().get(world.getName() + ".mapSpawn"));
-			}else{}
 		}
 	}
 
 	@EventHandler
-	public void onPlayerMoveZombieKill(PlayerMoveEvent event){
-		Player p = event.getPlayer();
-		Location pLoc = p.getLocation();
+	public void onPlayerMoveIn(PlayerMoveEvent event){
+		final Player p = event.getPlayer();
 		String worldName = p.getWorld().getName();
 		if(worldName.contains("zombieRun")||worldName.equals("world")){
-			List<Entity> near = pLoc.getWorld().getEntities();
-			for(Entity e : near) {
-				List<Entity> nearP = e.getNearbyEntities(10, 10, 10);
-				if(!(nearP.contains(EntityType.PLAYER))){
-					LivingEntity le = (LivingEntity) e;
-					le.setHealth(0);
-				}else if(nearP.contains(EntityType.PLAYER)){}
-			}
+			Material blockIsIn = p.getLocation().getBlock().getType();
+			World world = p.getWorld();
+			Location mapSpawn = world.getSpawnLocation();
+			if(blockIsIn == Material.WATER||blockIsIn == Material.STATIONARY_WATER){
+				p.teleport(mapSpawn);
+				p.sendMessage(ChatColor.RED + "[ZombieRun]" + ChatColor.AQUA + " Good luck next time!");
+			}else if(blockIsIn == Material.LAVA||blockIsIn == Material.STATIONARY_LAVA){
+				p.teleport(mapSpawn);
+				p.sendMessage(ChatColor.RED + "[ZombieRun]" + ChatColor.AQUA + " Good luck next time!");
+			}else{}
 		}
 	}
 }

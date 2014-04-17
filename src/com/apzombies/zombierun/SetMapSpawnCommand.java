@@ -31,27 +31,20 @@ public class SetMapSpawnCommand implements CommandExecutor{
 				if(args.length == 0){
 					if(worldName.contains("zombieRun")||worldName.equals("world")){
 						Location mapSpawn = p.getLocation();
-						plugin.getConfig().set(worldName + ".mapSpawn", mapSpawn);
+						int spawnX = (int) mapSpawn.getX();
+						int spawnY = (int) mapSpawn.getY();
+						int spawnZ = (int) mapSpawn.getZ();
+						world.setSpawnLocation(spawnX, spawnY, spawnZ);
 						p.sendMessage(ChatColor.RED + "[ZombieRun]" + ChatColor.GREEN + " Sucessfully set map spawn for map " + worldName);
 					}else{
 						p.sendMessage(ChatColor.GREEN + "[ZombieRun]" + ChatColor.RED + " This command is for zombieRun worlds only!");
 					}
-				}else if(args.length == 1){
-					String worldNameArg = args[0];
-					if(Bukkit.getWorld(worldNameArg) != null){
-						if(worldNameArg.contains("zombieRun")||worldNameArg.equals("world")){
-							Location mapSpawn = p.getLocation();
-							plugin.getConfig().set(worldName + ".mapSpawn", mapSpawn);
-							p.sendMessage(ChatColor.RED + "[ZombieRun]" + ChatColor.GREEN + " Successfully set map spawn for map " + worldNameArg);
-						}else{
-							p.sendMessage(ChatColor.GREEN + "[ZombieRun]" + ChatColor.RED + " This command is for zombieRun worlds only!");
-						}
-					}else{
-						p.sendMessage(ChatColor.RED + "[ZombieRun]" + ChatColor.DARK_RED + " Could not find world " + worldNameArg);
-					}
 				}else{
 					p.sendMessage(ChatColor.RED + "[ZombieRun]" + ChatColor.DARK_RED + "Too many arguments!");
 				}
+			}else{
+				p.sendMessage(ChatColor.GOLD + "[ZombieRun]"
+						+ ChatColor.RED + "Only admins can use this command!");
 			}
 		}else{
 			log.warning("This command is in-game only!");

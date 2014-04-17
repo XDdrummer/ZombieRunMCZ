@@ -23,12 +23,21 @@ public class WorldChangeListener implements Listener{
 			if(!p.hasPermission("zombierun.map.donor")&&!p.hasPermission("zombierun.map.*")&&!p.hasPermission("zombierun.*")){
 				p.teleport((Location) formerWorld);
 				p.sendMessage(ChatColor.GREEN + "[ZombieRun]" + ChatColor.RED + "You don't have permission to enter this world!");
-			}else{}
+			}else{
+				p.sendMessage(ChatColor.YELLOW + "[ZombieRun]" + ChatColor.GREEN + " Choose a ZombieRun kit using /zrkit <kitname>!");
+			}
 		}else if(newWorldName.contains("zombieRun")){
 			if(!p.hasPermission("zombierun.map.default")&&!p.hasPermission("zombierun.map.*")&&!p.hasPermission("zombierun.*")){
 				p.teleport((Location) formerWorld);
 				p.sendMessage(ChatColor.GREEN + "[ZombieRun]" + ChatColor.RED + "You don't have permission to enter this world!");
-			}else{}
+			}else{
+				p.sendMessage(ChatColor.YELLOW + "[ZombieRun]" + ChatColor.GREEN + " Choose a ZombieRun kit using /zrkit <kitname>!");
+			}
 		}else{}
+		
+		if(formerWorld.getName().contains("zombieRun")||formerWorld.getName().contains("zRunDonor")){
+			p.setPlayerListName(ChatColor.WHITE + p.getName() + ChatColor.WHITE);
+		}
+	
 	}
 }
